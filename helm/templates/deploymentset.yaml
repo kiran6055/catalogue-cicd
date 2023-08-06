@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue-deployment
+  namespace: roboshop
+  labels:
+    tier: app
+    name: catalogue
+spec:
+  replicas: {{ .Values.deploymentset.replicaCount }}
+  selector:
+    matchLabels:
+      tier: app
+      name: catalogue
+  template:
+    metadata:
+      labels:
+        tier: app
+        name: catalogue
+    spec:
+      containers:
+      - name: catalogue
+        imagePullPolicy: Always
+        image: "kiranprav/catalogue:{{ .Values.deploymentset.imageVersion }}"
+        envFrom:
+        - configMapRef:
+            name: catalogue-config
+        ports:
+        - containerPort: 8080
