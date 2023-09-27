@@ -1,6 +1,10 @@
 pipeline {
   agent any 
 
+  environment {
+    registry = "573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive"
+  }
+
   stages {
     stage('gitpull') {
       steps {
@@ -14,7 +18,9 @@ pipeline {
     stage('Docker Build') {
       steps {
         script {
-          sh 'docker build -t pixalive:v1 .'
+          sh """
+            docker build -t pixalive:v1 .
+          """  
         }
       }
     }
@@ -22,13 +28,11 @@ pipeline {
     stage('Image Push to ECR') {
       steps {
         script {
-          withCredentials([string(credentialsId: 'your-ecr-credentials-id', variable: 'DOCKER_CREDENTIALS')]) {
-            sh """
-              aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 573314280082.dkr.ecr.ap-south-1.amazonaws.com
-              docker tag pixalive:v1 573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive:v1
-              docker push 573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive:v1
-            """
-          }
+          sh """
+            aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 573314280082.dkr.ecr.ap-south-1.amazonaws.com
+            docker tag pixalive:v1 573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive:v1
+            docker push 573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive:v1
+          """
         }
       }
     }
