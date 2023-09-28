@@ -6,7 +6,7 @@ pipeline {
     }
 
   environment {
-    REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive"
+    REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/catalogue"
     REGION = "ap-south-1"
     AWS_ACCOUNT_ID = "573314280082"
   }
@@ -38,7 +38,7 @@ pipeline {
           script {
             sh """
               aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com
-              docker tag pixalive:${VERSION} ${REGISTRY}:${VERSION}
+              docker tag catalogue:${VERSION} ${REGISTRY}:${VERSION}
               docker push ${REGISTRY}:${VERSION}
             """
           }
