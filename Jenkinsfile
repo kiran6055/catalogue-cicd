@@ -52,7 +52,7 @@ pipeline {
             sh """
               aws eks update-kubeconfig --region ${REGION} --name spot-cluster
               cd helm
-// #              helm install ${params.APP_NAME} . --set deployment.imageVersion=${params.VERSION}
+
               helm upgrade ${params.APP_NAME} . --set deployment.imageVersion=${params.VERSION}
             """
           }
@@ -61,3 +61,6 @@ pipeline {
     }
   }
 }
+
+
+// #              helm install ${params.APP_NAME} . --set deployment.imageVersion=${params.VERSION}
