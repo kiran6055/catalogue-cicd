@@ -33,9 +33,9 @@ pipeline {
 
           script {
             sh """
-              aws ecr get-login-password --region ${REGIOIN} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com
-              docker tag pixalive:v1 ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:v1
-              docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:v1
+              aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com
+              docker tag pixalive ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:latest
+              docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:latest
             """
           }
         }
