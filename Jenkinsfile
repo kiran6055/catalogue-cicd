@@ -2,6 +2,7 @@ pipeline {
   agent any 
   parameters{
         string(name: 'VERSION', description: 'Enter the APP VERSION')
+        string(name: 'APP_NAME, description: 'Enter the APPLICATION NAME')
     }
 
   environment {
