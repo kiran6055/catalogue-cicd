@@ -25,7 +25,7 @@ pipeline {
       steps {
         script {
           sh """
-            docker build -t pixalive:${VERSION} .
+            docker build -t catalogue:${VERSION} .
           """  
         }
       }
