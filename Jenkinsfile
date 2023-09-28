@@ -1,9 +1,9 @@
 pipeline {
   agent any 
-  parameters{
-        string(name: 'VERSION', description: 'Enter the APP VERSION')
-        string(name: 'APP_NAME', description: 'Enter the APPLICATION NAME')
-    }
+  parameters {
+    string(name: 'VERSION', description: 'Enter the APP VERSION')
+    string(name: 'APP_NAME', description: 'Enter the APPLICATION NAME')
+  }
 
   environment {
     REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/catalogue"
@@ -25,7 +25,7 @@ pipeline {
       steps {
         script {
           sh """
-            docker build -t catalogue:${VERSION} .
+            docker build -t catalogue:${params.VERSION} .
           """  
         }
       }
@@ -34,35 +34,29 @@ pipeline {
     stage('Image Push to ECR') {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_AUTH']]) {
-
           script {
             sh """
               aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com
-              docker tag catalogue:${VERSION} ${REGISTRY}:${VERSION}
-              docker push ${REGISTRY}:${VERSION}
+              docker tag catalogue:${params.VERSION} ${REGISTRY}:${params.VERSION}
+              docker push ${REGISTRY}:${params.VERSION}
             """
           }
         }
       }
     }
 
-    stage('deploying into kubernetes') {
+    stage('Deploying into Kubernetes') {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_AUTH']]) {
-          dcript {
+          script {
             sh """
-            aws eks update-kubeconfig --region ${REGION} --name spot-cluster
-            cd helm
-            helm install catalogue . --set deployment.imageVersion=${VERSION}
-
-            
+              aws eks update-kubeconfig --region ${REGION} --name spot-cluster
+              cd helm
+              helm install ${params.APP_NAME} . --set deployment.imageVersion=${params.VERSION}
             """
           }
-
+        }
       }
     }
   }
-
-  
 }
-
