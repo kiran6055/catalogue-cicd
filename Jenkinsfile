@@ -25,7 +25,7 @@ pipeline {
       steps {
         script {
           sh """
-            docker build -t catalogue:${params.VERSION} .
+            docker build -t ${APP_NAME}:${VERSION} .
           """  
         }
       }
@@ -37,8 +37,8 @@ pipeline {
           script {
             sh """
               aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com
-              docker tag catalogue:${params.VERSION} ${REGISTRY}:${params.VERSION}
-              docker push ${REGISTRY}:${params.VERSION}
+              docker tag ${APP_NAME}:${VERSION} ${REGISTRY}:${VERSION}
+              docker push ${REGISTRY}:${VERSION}
             """
           }
         }
