@@ -21,7 +21,7 @@ spec:
       containers:
       - name: catalogue
         imagePullPolicy: Always
-        image: "kiranprav/catalogue:{{ .Values.deploymentset.imageVersion }}"
+        image: "kiranprav/catalogue:latest"
         envFrom:
         - configMapRef:
             name: catalogue-config

@@ -1,5 +1,8 @@
 pipeline {
   agent any 
+  parameters{
+        string(name: 'VERSION', description: 'Enter the APP VERSION')
+    }
 
   environment {
     REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive"
