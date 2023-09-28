@@ -2,7 +2,9 @@ pipeline {
   agent any 
 
   environment {
-    registry = "573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive"
+    REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive"
+    REGION = "ap-south-1"
+    AWS_ACCOUNT_ID = "573314280082"
   }
 
   stages {
@@ -27,14 +29,18 @@ pipeline {
 
     stage('Image Push to ECR') {
       steps {
-        script {
-          sh """
-            aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 573314280082.dkr.ecr.ap-south-1.amazonaws.com
-            docker tag pixalive:v1 573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive:v1
-            docker push 573314280082.dkr.ecr.ap-south-1.amazonaws.com/pixalive:v1
-          """
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_AUTH']]) {
+
+          script {
+            sh """
+              aws ecr get-login-password --region ${REGIOIN} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com
+              docker tag pixalive:v1 ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:v1
+              docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:v1
+            """
+          }
         }
       }
     }
   }
 }
+
