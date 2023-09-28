@@ -45,6 +45,24 @@ pipeline {
         }
       }
     }
+
+    stage('deploying into kubernetes') {
+      steps {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_AUTH']]) {
+          dcript {
+            sh """
+            aws eks update-kubeconfig --region ${REGION} --name spot-cluster
+            cd helm
+            helm install catalogue . --set deployment.imageVersion=${VERSION}
+
+            
+            """
+          }
+
+      }
+    }
   }
+
+  
 }
 
