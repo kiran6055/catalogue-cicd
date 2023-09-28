@@ -25,7 +25,7 @@ pipeline {
       steps {
         script {
           sh """
-            docker build -t pixalive:v1 .
+            docker build -t pixalive:${VERSION} .
           """  
         }
       }
@@ -38,8 +38,8 @@ pipeline {
           script {
             sh """
               aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com
-              docker tag pixalive ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:latest
-              docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/pixalive:latest
+              docker tag pixalive:${VERSION} ${REGISTRY}:${VERSION}
+              docker push ${REGISTRY}:${VERSION}
             """
           }
         }
