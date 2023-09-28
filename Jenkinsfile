@@ -6,7 +6,7 @@ pipeline {
   }
 
   environment {
-    REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/catalogue"
+    REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${APP_NAME}"
     REGION = "ap-south-1"
     AWS_ACCOUNT_ID = "573314280082"
   }
