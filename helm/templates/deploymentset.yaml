@@ -21,7 +21,7 @@ spec:
       containers:
       - name: catalogue
         imagePullPolicy: Always
-        image: "573314280082.dkr.ecr.ap-south-1.amazonaws.com/catalogue:{{ .Values.deployment.imageVersion }}"
+        image: "573314280082.dkr.ecr.ap-south-1.amazonaws.com/catalogue:{{ .Values.deploymentset.imageVersion }}"
         envFrom:
         - configMapRef:
             name: catalogue-config

@@ -1,6 +1,6 @@
 deploymentset:
   replicaCount: 2
-  imageVersion: latest
+  imageVersion: latest #(we are giving at the paramters in jenkins pipeline)
 service:
   port: 80
 
