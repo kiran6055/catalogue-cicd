@@ -12,6 +12,11 @@ spec:
     matchLabels:
       tier: app
       name: catalogue
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 2
   template:
     metadata:
       labels:
@@ -27,3 +32,26 @@ spec:
             name: catalogue-config
         ports:
         - containerPort: 8080
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: catalogue-hpa  # Updated name for HPA
+  namespace: roboshop
+  labels:
+    tier: app
+    name: catalogue
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: catalogue-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
