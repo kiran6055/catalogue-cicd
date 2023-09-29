@@ -8,7 +8,7 @@ pipeline {
   environment {
     REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${APP_NAME}"
     REGION = "ap-south-1"
-    AWS_ACCOUNT_ID = "573314280082"
+    AWS_ACCOUNT_ID = "358308582535"
   }
 
   stages {
@@ -50,9 +50,9 @@ pipeline {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_AUTH']]) {
           script {
             sh """
-              aws eks update-kubeconfig --region ${REGION} --name spot-cluster
+              aws eks update-kubeconfig --region ${REGION} --name kubernetes-cluster
               cd helm
-              helm upgrade  ${APP_NAME}  . --set deployment.imageVersion=${VERSION}
+              helm install  ${APP_NAME}  . --set deployment.imageVersion=${VERSION}
 
             """
           }
