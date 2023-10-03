@@ -1,0 +1,114 @@
+FROM node:alpine
+WORKDIR /app
+COPY ./package-lock.json ./
+COPY ./tsconfig.json ./
+COPY ./tslint.json ./
+COPY ./package.json ./
+RUN npm install
+COPY ./src ./src
+COPY ./.env.production ./
+CMD ["npm", "start"]
+
+From Mongo_db:latest
+
+
+FROM alapha:linux as build
+EXPOSE: 3003
+ENV NODE_ENV=production
+ENV PORT=3003
+ENV MONGODB_URL= mongodb+srv://pixalive:pixalive2023@pixalive.ds48vqq.mongodb.net/pixalivedev?retryWrites=true&w=majority
+COPY --from=build /opt/shipping/target/shipping-1.0.jar shipping.jar
+
+# CMD ["node", "/src/bin/server.ts"] 
+
+
+docker-compose
+
+version: "3"
+
+services: 
+  mongo_db: 
+    container_name: database_container
+    image: mongo:latest
+    restart: always
+
+  nodejs_pixalivestory:
+    build: .
+    ports: 
+      - 3003:3003
+    environment: 
+      MONGODB_URL: mongodb+srv://pixalive:pixalive2023@pixalive.ds48vqq.mongodb.net/pixalivedev?retryWrites=true&w=majority
+      PORT: 3003
+      NODE_ENV: production
+    depends_on:
+      - mongo_db
+
+
+
+
+
+FROM node:alpine
+WORKDIR /app
+COPY ./package-lock.json ./
+COPY ./tsconfig.json ./
+COPY ./tslint.json ./
+COPY ./package.json ./
+RUN npm install
+RUN npm install axios
+COPY ./src ./src
+COPY ./.env.production ./
+CMD ["npm", "start"]
+
+
+
+
+# Stage 1: Build Node.js application
+FROM node:alpine 
+WORKDIR /app
+COPY package-lock.json ./
+COPY tsconfig.json ./
+COPY tslint.json ./
+COPY package.json ./
+RUN npm install
+RUN npm install axios
+COPY ./src ./src
+COPY ./.env.production ./
+# Command to build the application
+
+EXPOSE 3003
+
+# Environment variables for Node.js
+ENV NODE_ENV=production
+ENV PORT=3003
+ENV MONGODB_URL=mongodb+srv://pixalive:pixalive2023@pixalive.ds48vqq.mongodb.net/pixalivedev?retryWrites=true&w=majority
+CMD ["npm", "start"]
+
+
+
+#Create IAM OIDC Provider
+eksctl utils associate-iam-oidc-provider \
+      --region ${AWS_REGION} \
+      --cluster ${LAB_CLUSTER_ID} \
+      --approve
+
+k8 ingress role policy url for ALB
+
+#first step creating Iam policy
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.6.0/docs/install/iam_policy.json
+
+#by default it will create the policy if it not created use below commands
+# the above command will download the policy the below code will create the policy
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam-policy.json
+
+#second step creating Iamrole come serviceaccount
+eksctl create iamserviceaccount \
+--cluster=<cluster-name> \
+--namespace=kube-system \
+--name=aws-load-balancer-controller \
+--attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+--override-existing-serviceaccounts \
+--region <region-code> \
+--approve
+
